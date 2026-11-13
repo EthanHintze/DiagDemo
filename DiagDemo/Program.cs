@@ -6,18 +6,10 @@ var app = builder.Build();
 app.MapGet("/", () => "DiagDemo is running");
 
 // Correct async code: the thread returns to the pool while waiting.
-app.MapGet("/healthy", async () =>
-{
-    await Task.Delay(500);
-    return "ok";
-});
+
 
 // BUG 1: sync-over-async. Blocks a thread pool thread for 500 ms.
-app.MapGet("/starve", () =>
-{
-    Task.Delay(500).Wait();
-    return "ok";
-});
+
 
 // BUG 2: an inefficient algorithm that burns CPU.
 app.MapGet("/cpu", () => $"primes: {Work.CountPrimes(20_000)}");
